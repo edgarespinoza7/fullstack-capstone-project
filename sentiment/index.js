@@ -18,7 +18,7 @@ app.use(expressPino);
 app.post('/sentiment', async (req, res) => {
 
     // Task 4: extract the sentence parameter
-    const { sentence } = req.query; //It coul be "req.body"
+    const { sentence } = req.query; 
 
 
     if (!sentence) {
@@ -40,11 +40,9 @@ app.post('/sentiment', async (req, res) => {
         // Task 5: set sentiment to negative or positive based on score rules
         if (analysisResult < 0) {
             sentiment = "negative";
-        } else if(analysisResult >= 0 && analysisResult < 0.33) {
-            sentiment = "neutral";
-        } else {
+        } else if(analysisResult > 0.33) {
             sentiment = "positive";
-        }
+        } 
 
         // Logging the result
         logger.info(`Sentiment analysis result: ${analysisResult}`);
