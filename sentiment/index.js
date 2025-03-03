@@ -31,13 +31,13 @@ app.post('/sentiment', async (req, res) => {
     const stemmer = natural.PorterStemmer;
     const analyzer = new Analyzer("English", stemmer, "afinn");
 
-    // Perform sentiment analysis
+    // Perform Sentiment analysis
     try {
         const analysisResult = analyzer.getSentiment(sentence.split(' '));
 
         let sentiment = "neutral";
 
-        // Task 5: set sentiment to negative or positive based on score rules
+        // Task 5: Set sentiment to negative or positive based on score rules
         if (analysisResult < 0) {
             sentiment = "negative";
         } else if(analysisResult > 0.33) {
