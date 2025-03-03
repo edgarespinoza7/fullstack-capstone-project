@@ -15,7 +15,7 @@ function MainPage() {
         let url = `${urlConfig.backendUrl}/api/gifts`;
         const response = await fetch(url);
         if (!response.ok) {
-          //something went wrong
+          //Something went wrong
           throw new Error(`HTTP error; ${response.status}`);
         }
         const data = await response.json();
