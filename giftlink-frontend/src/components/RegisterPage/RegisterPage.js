@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-
+import { urlConfig } from '../../config';
+import { useAppContext } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import "./RegisterPage.css";
 
 function RegisterPage() {
@@ -8,10 +10,65 @@ function RegisterPage() {
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const [showerr, setShowerr] = useState('');
+
+    const navigate = useNavigate();
+    const { setIsLoggedIn } = useAppContext();
+
+
     // insert code here to create handleRegister function and include console.log
     const handleRegister = async () => {
-        console.log("Register invoked");
-    };
+
+        const userData = {
+            firstName,
+            lastName,
+            email,
+            password,
+        };
+
+        const response = await fetch(`${urlConfig.backendUrl}/api/auth/register`, {
+            //{{Insert code here}} //Task 6: Set method
+            //{{Insert code here}} //Task 7: Set headers
+            //{{Insert code here}} //Task 8: Set body to send user details
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+            },
+            body: JSON.stringify(userData),
+        })
+
+        // Handle API response
+        if (!response.ok) {
+            throw new Error("Registration failed");
+        }
+
+        const json = await response.json();
+
+        console.log('json data', json);
+        console.log('er', json.error);
+
+
+        if (json.authtoken) {
+            sessionStorage.setItem('auth-token', json.authtoken);
+            sessionStorage.setItem('name', firstName);
+            sessionStorage.setItem('email', json.email);
+            //insert code for setting logged in state
+            //insert code for navigating to MainPAge
+
+            // Set authentication context
+            setIsLoggedIn(true);
+
+            // Redirect to login or another page after success
+            navigate("/app");
+        }
+
+        if (json.error) {
+            //Step 2 - Task 5
+            setShowerr(json.error);
+        }
+    }
+
 
     return (
         <div className="container mt-5">
@@ -63,8 +120,9 @@ function RegisterPage() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
+                            <div className="text-danger">{showerr}</div>
                         </div>
-                        
+
                         <div className="mb-4">
                             <label htmlFor="password" className="form-label">
                                 Password
