@@ -17,7 +17,7 @@ function RegisterPage() {
     const { setIsLoggedIn } = useAppContext();
 
 
-    // insert code here to create handleRegister function and include console.log
+    // handleRegister function 
     const handleRegister = async () => {
 
         const userData = {
@@ -28,13 +28,15 @@ function RegisterPage() {
         };
 
         const response = await fetch(`${urlConfig.backendUrl}/api/auth/register`, {
-            //{{Insert code here}} //Task 6: Set method
-            //{{Insert code here}} //Task 7: Set headers
-            //{{Insert code here}} //Task 8: Set body to send user details
+            //Task 6: Set method
+
+
             method: "POST",
+            //Task 7: Set headers
             headers: {
                 "content-type": "application/json",
             },
+            //Task 8: Set body to send user details
             body: JSON.stringify(userData),
         })
 
@@ -53,8 +55,7 @@ function RegisterPage() {
             sessionStorage.setItem('auth-token', json.authtoken);
             sessionStorage.setItem('name', firstName);
             sessionStorage.setItem('email', json.email);
-            //insert code for setting logged in state
-            //insert code for navigating to MainPAge
+            
 
             // Set authentication context
             setIsLoggedIn(true);
