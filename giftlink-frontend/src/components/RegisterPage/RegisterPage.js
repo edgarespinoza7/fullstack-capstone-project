@@ -1,75 +1,65 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+//Step 1 - Task 1
 import { urlConfig } from '../../config';
+
+//Step 1 - Task 2
 import { useAppContext } from '../../context/AuthContext';
+
+//Step 1 - Task 3
 import { useNavigate } from 'react-router-dom';
-import "./RegisterPage.css";
+
+import './RegisterPage.css';
 
 function RegisterPage() {
-    //insert code here to create useState hook variables for firstName, lastName, email, password
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
+    //Step 1 - Task 4
     const [showerr, setShowerr] = useState('');
 
+    //Step 1 - Task 5
     const navigate = useNavigate();
     const { setIsLoggedIn } = useAppContext();
 
-
-    // handleRegister function 
     const handleRegister = async () => {
-
-        const userData = {
-            firstName,
-            lastName,
-            email,
-            password,
-        };
-
         const response = await fetch(`${urlConfig.backendUrl}/api/auth/register`, {
-            //Task 6: Set method
-
-
-            method: "POST",
-            //Task 7: Set headers
+            //Step 1 - Task 6
+            method: 'POST',
+            //Step 1 - Task 7
             headers: {
-                "content-type": "application/json",
+                'content-type': 'application/json',
             },
-            //Task 8: Set body to send user details
-            body: JSON.stringify(userData),
-        })
+            //Step 1 - Task 8
+            body: JSON.stringify({
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                password: password
+            })
+        });
 
-        // Handle API response
-        if (!response.ok) {
-            throw new Error("Registration failed");
-        }
-
+        //Step 2 - Task 1
         const json = await response.json();
-
         console.log('json data', json);
         console.log('er', json.error);
 
-
+        //Step 2 - Task 2
         if (json.authtoken) {
             sessionStorage.setItem('auth-token', json.authtoken);
             sessionStorage.setItem('name', firstName);
             sessionStorage.setItem('email', json.email);
-            
-
-            // Set authentication context
+            //Step 2 - Task 3
             setIsLoggedIn(true);
-
-            // Redirect to login or another page after success
-            navigate("/app");
+            //Step 2 - Task 4
+            navigate('/app');
         }
-
         if (json.error) {
             //Step 2 - Task 5
             setShowerr(json.error);
         }
     }
-
 
     return (
         <div className="container mt-5">
@@ -77,13 +67,8 @@ function RegisterPage() {
                 <div className="col-md-6 col-lg-4">
                     <div className="register-card p-4 border rounded">
                         <h2 className="text-center mb-4 font-weight-bold">Register</h2>
-
-                        {/* insert code here to create input elements for all the variables - firstName, lastName, email, password */}
-                        <div className="mb-4">
-                            <label htmlFor="firstName" className="form-label">
-                                FirstName
-                            </label>
-                            <br></br>
+                        <div className="mb-3">
+                            <label htmlFor="firstName" className="form-label">FirstName</label>
                             <input
                                 id="firstName"
                                 type="text"
@@ -93,11 +78,11 @@ function RegisterPage() {
                                 onChange={(e) => setFirstName(e.target.value)}
                             />
                         </div>
-                        <div className="mb-4">
-                            <label htmlFor="lastName" className="form-label">
-                                LastName
-                            </label>
-                            <br></br>
+
+                        {/* last name */}
+
+                        <div className="mb-3">
+                            <label htmlFor="lastName" className="form-label">LastName</label>
                             <input
                                 id="lastName"
                                 type="text"
@@ -108,50 +93,42 @@ function RegisterPage() {
                             />
                         </div>
 
-                        <div className="mb-4">
-                            <label htmlFor="email" className="form-label">
-                                Email
-                            </label>
-                            <br></br>
+                        {/* email  */}
+                        <div className="mb-3">
+                            <label htmlFor="email" className="form-label">Email</label>
                             <input
                                 id="email"
-                                type="email"
+                                type="text"
                                 className="form-control"
                                 placeholder="Enter your email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
+                            {/* Step 2 - Task 6*/}
+
                             <div className="text-danger">{showerr}</div>
                         </div>
 
                         <div className="mb-4">
-                            <label htmlFor="password" className="form-label">
-                                Password
-                            </label>
-                            <br></br>
+                            <label htmlFor="password" className="form-label">Password</label>
                             <input
                                 id="password"
                                 type="password"
                                 className="form-control"
-                                placeholder="Enter your Password"
+                                placeholder="Enter your password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
-
-                        {/* insert code here to create a button that performs the `handleRegister` function on click */}
                         <button className="btn btn-primary w-100 mb-3" onClick={handleRegister}>Register</button>
                         <p className="mt-4 text-center">
-                            Already a member?{" "}
-                            <a href="/app/login" className="text-primary">
-                                Login
-                            </a>
+                            Already a member? <a href="/app/login" className="text-primary">Login</a>
                         </p>
                     </div>
                 </div>
             </div>
         </div>
-    ); //end of return
+    );
 }
 
 export default RegisterPage;
