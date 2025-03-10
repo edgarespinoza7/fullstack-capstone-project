@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { urlConfig } from '../../config';
+import { useAppContext } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 
 function LoginPage() {
@@ -7,10 +10,57 @@ function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const [incorrect, setIncorrect] = useState('');
+
+    const navigate = useNavigate();
+    const bearerToken = sessionStorage.getItem('bearer-token');
+    const { setIsLoggedIn } = useAppContext();
+
+    useEffect(() => {
+        if (sessionStorage.getItem('auth-token')) {
+            navigate('/app')
+        }
+    }, [navigate])
+
+
     // insert code here to create handleLogin function and include console.log
     const handleLogin = async (e) => {
-        e.preventDefault();
-        console.log("Inside handleLogin");
+        const response = await fetch(`${urlConfig.backendUrl}/api/auth/login`, {
+            //Step 1 - Task 6
+            method: 'POST',
+            //Step 1 - Task 7
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': bearerToken ? `Bearer ${bearerToken}` : '', // Include Bearer token if available
+            },
+            //Step 1 - Task 8
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        });
+
+        const json = await response.json();
+        console.log('Json',json);
+
+        if (json.authtoken) {
+            sessionStorage.setItem('auth-token', json.authtoken);
+            sessionStorage.setItem('name', json.userName);
+            sessionStorage.setItem('email', json.userEmail);
+
+            setIsLoggedIn(true);
+
+            navigate('/app')
+        } else {
+            document.getElementById("email").value = "";
+            document.getElementById("password").value = "";
+            setIncorrect("Wrong password. Try again.");
+            //Below is optional, but recommended - Clear out error message after 2 seconds
+            setTimeout(() => {
+                setIncorrect("");
+            }, 2000);
+        }
+
     }
 
     return (
@@ -31,7 +81,7 @@ function LoginPage() {
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
-                        
+
                         <div className="mb-3">
                             <label htmlFor="password" className="form-label">Password</label>
                             <input
@@ -42,7 +92,10 @@ function LoginPage() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
+                             <span style={{color:'red',height:'.5cm',display:'block',fontStyle:'italic',fontSize:'12px'}}>{incorrect}</span>
                         </div>
+
+                       
 
                         <button className="btn btn-primary w-100 mb-3" onClick={handleLogin}>Login</button>
                         <p className="mt-4 text-center">
