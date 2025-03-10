@@ -1,3 +1,4 @@
+/*jshint esversion: 8 */
 const express = require('express');
 const router = express.Router();
 const connectToDatabase = require('../models/db');
@@ -23,7 +24,7 @@ router.get('/', async (req, res, next) => {
             query.category = req.query.category;
         }
         if (req.query.condition) {
-           query.condition = req.query.condition;
+            query.condition = req.query.condition;
         }
         if (req.query.age_years) {
             query.age_years = { $lte: parseInt(req.query.age_years) };
